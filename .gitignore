@@ -1,0 +1,23 @@
+# Python ignores
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# Output files
+mem_results.json
+*.log
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE/Editors
+.vscode/
+.idea/
