@@ -4,13 +4,14 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-import yara
+import yara  # type: ignore
 import base64
+from typing import Any
 
-def _bytes_preview(b: bytes, max_len: int = 64) -> dict:
+def _bytes_preview(b: bytes | bytearray | None, max_len: int = 64) -> dict[str, Any]:
     if b is None:
         return {"len": 0, "b64": "", "truncated": False}
-    raw = b[:max_len]
+    raw = bytes(b[:max_len])  # type: ignore
     return {
         "len": len(b),
         "b64": base64.b64encode(raw).decode("ascii"),
@@ -25,8 +26,8 @@ def compile_rules(rules_dir: Path) -> yara.Rules:
     filepaths = {str(p.relative_to(rules_dir)).replace("\\", "/"): str(p) for p in rule_files}
     return yara.compile(filepaths=filepaths)
 
-def _string_matches_to_list(m: yara.Match) -> list[dict]:
-    out = []
+def _string_matches_to_list(m: yara.Match) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
 
     strings = getattr(m, "strings", None)
     if not strings:
@@ -120,20 +121,20 @@ def main():
 
     rules = compile_rules(rules_dir)
 
-    results = []
-    scanned = 0
-    match_files = 0
+    results: list[dict[str, Any]] = []
+    scanned: int = 0
+    match_files: int = 0
 
     print(f"Scanning: {target}")
     print(f"Rules: {rules_dir.resolve()}")
     print("----")
 
     for p in iter_files(target):
-        scanned += 1
+        scanned += 1  # type: ignore
         r = scan_one(rules, p, args.timeout)
 
         if r["status"] == "MATCH":
-            match_files += 1
+            match_files += 1  # type: ignore
             print(f"[MATCH] {r['path']}")
             for md in r["matches"]:
                 print(f"  - rule={md['rule']} tags={md['tags']} meta={md['meta']}")

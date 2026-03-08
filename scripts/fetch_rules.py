@@ -42,7 +42,7 @@ def copy_yara_files(extracted_root: Path, dest_dir: Path, categories: list[str])
                 f"Unknown category(s): {sorted(unknown)}. Allowed: {sorted(ALLOWED_TOP_LEVEL)}"
             )
 
-    count = 0
+    count: int = 0
     for p in extracted_root.rglob("*"):
         if not p.is_file():
             continue
@@ -58,7 +58,7 @@ def copy_yara_files(extracted_root: Path, dest_dir: Path, categories: list[str])
         out_path = dest_dir / rel
         out_path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(p, out_path)
-        count += 1
+        count += 1  # type: ignore
 
     return count
 
